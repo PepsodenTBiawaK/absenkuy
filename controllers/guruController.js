@@ -1,5 +1,5 @@
 const Guru = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Ambil semua guru
 exports.getAllGuru = async (req, res) => {

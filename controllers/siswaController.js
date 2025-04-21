@@ -1,7 +1,7 @@
 const Siswa = require('../models/Siswa');
 const Kelas = require('../models/Kelas');
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Ambil semua siswa
 exports.getAllSiswa = async (req, res) => {

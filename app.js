@@ -3,13 +3,17 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const db = require('./config/db');
 
-// Load ENV
 dotenv.config();
 
 const app = express();
 
+// Atur CORS agar menerima request dari frontend Vercel
+app.use(cors({
+  origin: "https://absenkuy-bay.vercel.app",
+  credentials: true,
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Test route
@@ -41,7 +45,7 @@ db.authenticate()
   .then(() => console.log('✅ Database connected...'))
   .catch(err => console.log('❌ DB Connection Error:', err));
 
-// Sync models ke DB force : true untuk mereset
+// Sync models ke DB
 db.sync({})
   .then(() => console.log('✅ Semua tabel berhasil disinkronkan!'))
   .catch(err => console.error('❌ Sync error:', err));

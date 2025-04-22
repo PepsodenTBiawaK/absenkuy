@@ -137,6 +137,37 @@ exports.updateSiswa = async (req, res) => {
   }
 };
 
+// Reset PW
+exports.resetPasswordSiswa = async (req, res) => {
+  const { id } = req.params; // id siswa
+  const { newPassword } = req.body;
+
+  try {
+    // Ambil data siswa berdasarkan ID
+    const siswa = await Siswa.findByPk(id);
+    if (!siswa) return res.status(404).json({ message: 'Data siswa tidak ditemukan' });
+
+    // Cari user siswa dari relasi user_id
+    const userSiswa = await User.findOne({
+      where: { id: siswa.user_id, role: 'siswa' }
+    });
+
+    if (!userSiswa) return res.status(404).json({ message: 'Akun siswa tidak ditemukan' });
+
+    // Hash dan simpan password baru
+    const hashed = await bcrypt.hash(newPassword, 10);
+    userSiswa.password = hashed;
+    await userSiswa.save();
+
+    res.json({ message: 'Password siswa berhasil direset' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
 // Hapus siswa + akun user siswa
 // exports.deleteSiswa = async (req, res) => {
 //   const { id } = req.params;

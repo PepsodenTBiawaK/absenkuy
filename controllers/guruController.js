@@ -77,6 +77,26 @@ exports.updateGuru = async (req, res) => {
   }
 };
 
+//Reset Pw 
+exports.resetPasswordGuru = async (req, res) => {
+  const { id } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const guru = await Guru.findOne({ where: { id, role: 'guru' } });
+    if (!guru) return res.status(404).json({ message: 'Guru tidak ditemukan' });
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    guru.password = hashed;
+    await guru.save();
+
+    res.json({ message: 'Password guru berhasil direset' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
 
 //  Hapus guru
 exports.deleteGuru = async (req, res) => {

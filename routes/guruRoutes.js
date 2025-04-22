@@ -7,6 +7,7 @@ const { verifyToken, isAdmin } = require('../middleware/authMiddleware');
 router.get('/', verifyToken, isAdmin, guruController.getAllGuru);
 router.post('/', verifyToken, isAdmin, guruController.createGuru);
 router.put('/:id', verifyToken, isAdmin, guruController.updateGuru);
+router.post('/reset-password/:id', verifyToken, isAdmin, guruController.resetPasswordGuru);
 router.delete('/:id', verifyToken, isAdmin, guruController.deleteGuru);
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const Kelas = require('../models/Kelas');
-const User = require('../models/User');
+const Kelas = require("../models/Kelas");
+const User = require("../models/User");
 
 // Get Semua Kelas
 exports.getAllKelas = async (req, res) => {
@@ -8,10 +8,10 @@ exports.getAllKelas = async (req, res) => {
       include: [
         {
           model: User,
-          as: 'guru',
-          attributes: ['id', 'name', 'email']
-        }
-      ]
+          as: "guru",
+          attributes: ["id", "name", "email"],
+        },
+      ],
     });
     res.json(kelas);
   } catch (err) {
@@ -26,15 +26,15 @@ exports.createKelas = async (req, res) => {
   try {
     const existingKelas = await Kelas.findOne({ where: { nama_kelas } });
     if (existingKelas) {
-     return res.status(400).json({ message: 'Nama kelas sudah digunakan' });
+      return res.status(400).json({ message: "Nama kelas sudah digunakan" });
     }
 
-    const guru = await User.findOne({ where: { id: guru_id, role: 'guru' } });
-    if (!guru) return res.status(400).json({ message: 'Guru tidak ditemukan' });
+    const guru = await User.findOne({ where: { id: guru_id, role: "guru" } });
+    if (!guru) return res.status(400).json({ message: "Guru tidak ditemukan" });
 
     const kelas = await Kelas.create({ nama_kelas, guru_id });
 
-    res.status(201).json({ message: 'Kelas berhasil dibuat', kelas });
+    res.status(201).json({ message: "Kelas berhasil dibuat", kelas });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -47,16 +47,18 @@ exports.updateKelas = async (req, res) => {
 
   try {
     const kelas = await Kelas.findByPk(id);
-    if (!kelas) return res.status(404).json({ message: 'Kelas tidak ditemukan' });
+    if (!kelas) return res.status(404).json({ message: "Kelas tidak ditemukan" });
 
-    const existingKelas = await Kelas.findOne({ where: { nama_kelas } });
-    if (existingKelas) {
-     return res.status(400).json({ message: 'Nama kelas sudah digunakan' });
+    if (nama_kelas && nama_kelas != kelas.nama_kelas) {
+      const existingKelas = await Kelas.findOne({ where: { nama_kelas } });
+      if (existingKelas) {
+        return res.status(400).json({ message: "Nama kelas sudah digunakan" });
+      }
     }
 
     if (guru_id) {
-      const guru = await User.findOne({ where: { id: guru_id, role: 'guru' } });
-      if (!guru) return res.status(400).json({ message: 'Guru tidak ditemukan' });
+      const guru = await User.findOne({ where: { id: guru_id, role: "guru" } });
+      if (!guru) return res.status(400).json({ message: "Guru tidak ditemukan" });
       kelas.guru_id = guru_id;
     }
 
@@ -64,7 +66,7 @@ exports.updateKelas = async (req, res) => {
 
     await kelas.save();
 
-    res.json({ message: 'Kelas berhasil diupdate', kelas });
+    res.json({ message: "Kelas berhasil diupdate", kelas });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -76,11 +78,11 @@ exports.deleteKelas = async (req, res) => {
 
   try {
     const kelas = await Kelas.findByPk(id);
-    if (!kelas) return res.status(404).json({ message: 'Kelas tidak ditemukan' });
+    if (!kelas) return res.status(404).json({ message: "Kelas tidak ditemukan" });
 
     await kelas.destroy();
 
-    res.json({ message: 'Kelas berhasil dihapus' });
+    res.json({ message: "Kelas berhasil dihapus" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -91,7 +93,7 @@ exports.getKelasGuru = async (req, res) => {
   const guruId = req.user.userId; // ✅ Pastikan ini dapat dari middleware verifyToken
   try {
     const kelas = await Kelas.findAll({
-      where: { guru_id: guruId }
+      where: { guru_id: guruId },
     });
     res.json(kelas);
   } catch (err) {

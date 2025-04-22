@@ -16,6 +16,7 @@ exports.createGuru = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    
     const existingGuru = await Guru.findOne({ where: { name } });
     if (existingGuru) {
      return res.status(400).json({ message: 'Nama guru sudah digunakan' });
@@ -48,14 +49,19 @@ exports.updateGuru = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    // Cari data guru yang akan diupdate
     const guru = await Guru.findOne({ where: { id, role: 'guru' } });
     if (!guru) return res.status(404).json({ message: 'Guru tidak ditemukan' });
 
-    const existingGuru = await Guru.findOne({ where: { name } });
-    if (existingGuru) {
-     return res.status(400).json({ message: 'Nama guru sudah digunakan' });
+    // Hanya cek duplikat jika nama berubah
+    if (name && name !== guru.name) {
+      const existingGuru = await Guru.findOne({ where: { name } });
+      if (existingGuru) {
+        return res.status(400).json({ message: 'Nama guru sudah digunakan' });
+      }
     }
 
+    // Update field
     guru.name = name || guru.name;
     guru.email = email || guru.email;
 
@@ -70,6 +76,7 @@ exports.updateGuru = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 //  Hapus guru
 exports.deleteGuru = async (req, res) => {

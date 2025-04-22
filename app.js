@@ -8,10 +8,23 @@ dotenv.config();
 const app = express();
 
 // Atur CORS agar menerima request dari frontend Vercel
+// ✅ Izinkan dua origin sekaligus
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://absenkuy-bay.vercel.app'
+];
+
 app.use(cors({
-  origin: "https://absenkuy-bay.vercel.app",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
 
 // Middleware
 app.use(express.json());
